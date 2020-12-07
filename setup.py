@@ -4,8 +4,8 @@ with open("README.md", "r", encoding="utf-8") as fh:
     long_description = fh.read()
 
 setuptools.setup(
-    name="mantle",
-    version="0.0.1",
+    name="mantle2",
+    version="0.0.2",
     author="Lenny Truong",
     author_email="lenny@cs.stanford.edu",
     description="magma standard library (version 2)",
