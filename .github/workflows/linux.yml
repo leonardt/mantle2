@@ -24,9 +24,14 @@ jobs:
     - name: Install Python packages
       shell: bash -l {0}
       run: |
-          pip install pytest
+          pip install pytest pytest-cov pytest-pycodestyle
           pip install -e .
     - name: Pytest
       shell: bash -l {0}
       run: |
-        pytest tests/
+        pytest --cov mantle2 tests/
+        pycodestyle mantle2 tests
+    - name: Upload Coverage
+      env:
+          CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
+        bash <(curl -s https://codecov.io/bash) 
