@@ -7,10 +7,6 @@ import magma as m
 from mantle2.counter import CounterTo
 
 
-def ispow2(n):
-    return (n & (n - 1) == 0) and n != 0
-
-
 class Queue(m.Generator2):
     def __init__(self, entries: int, T: m.Kind):
         assert entries >= 0
