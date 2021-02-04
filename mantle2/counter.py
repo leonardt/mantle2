@@ -1,6 +1,8 @@
 from typing import Optional
 import magma as m
 
+from mantle2.util import ispow2
+
 
 class CounterTo(m.Generator2):
     """
@@ -27,4 +29,6 @@ class CounterTo(m.Generator2):
             self.io.COUT @= COUT
         else:
             I = reg.O + 1
-        reg.I @= m.mux([I, 0], reg.O == n)
+        if not ispow2(n):
+            I = m.mux([I, 0], reg.O == n)
+        reg.I @= I
