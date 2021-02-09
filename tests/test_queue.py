@@ -17,14 +17,12 @@ class QueueModel:
     def enq(self, value):
         if len(self._entries) > self.num_entries:
             raise Exception("Queue is full")
-        print(f"Enq {value}")
         self._entries.append(value)
 
     @pysv.sv(return_type=pysv.DataType.UInt)
     def deq(self):
         if len(self._entries) == 0:
             raise Exception("Queue is empty")
-        print(f"Deq {self._entries[0]}")
         return self._entries.pop(0)
 
 
