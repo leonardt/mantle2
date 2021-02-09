@@ -52,7 +52,7 @@ def test_queue_model():
     num_entries = 4
     tester = f.SynchronousTester(Queue(num_entries, m.UInt[32]))
     model = tester.Var("model", QueueModel)
-    tester.poke(model, tester.make_call(QueueModel, num_entries))
+    tester.poke(model, tester.make_call_expr(QueueModel, num_entries))
     for i in range(10):
         enq_valid = Bit.random()
         enq_data = BitVector.random(32)
@@ -69,7 +69,7 @@ def test_queue_model():
         if_tester = tester._if(
             tester.circuit.deq.valid & tester.circuit.deq.ready)
         var = if_tester.Var("deq_data", BitVector[32])
-        if_tester.poke(var, if_tester.make_call(model.deq))
+        if_tester.poke(var, if_tester.make_call_expr(model.deq))
         # TODO: Expect calls function twice (second time for erorr message)
         if_tester.circuit.deq.data.expect(var)
         tester.advance_cycle()
