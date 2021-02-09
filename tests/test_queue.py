@@ -49,6 +49,7 @@ def test_queue_model():
     clear_imports(QueueModel)
     num_entries = 4
     tester = f.SynchronousTester(Queue(num_entries, m.UInt[32]))
+    tester.step(2)
     model = tester.Var("model", QueueModel)
     tester.poke(model, tester.make_call_expr(QueueModel, num_entries))
     for i in range(10):
