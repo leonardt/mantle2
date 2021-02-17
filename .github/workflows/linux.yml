@@ -25,6 +25,7 @@ jobs:
       shell: bash -l {0}
       run: |
           pip install pytest pytest-cov pytest-pycodestyle
+          pip install -e git://github.com/leonardt/fault.git@mon-arr#egg=fault
           pip install -e .
     - name: Pytest
       shell: bash -l {0}

@@ -3,7 +3,25 @@ import magma as m
 from mantle2.queue import Queue
 import fault as f
 import pysv
-from pysv.util import clear_imports
+
+
+def test_queue_simple():
+    tester = f.SynchronousTester(Queue(4, m.Bits[2]))
+    tester.advance_cycle()
+    for i in range(4):
+        tester.circuit.enq.data = i
+        tester.circuit.enq.valid = 1
+        tester.circuit.enq.ready.expect(1)
+        tester.advance_cycle()
+    tester.circuit.enq.valid = 0
+    tester.circuit.enq.ready.expect(0)
+    for i in range(4):
+        tester.circuit.deq.data.expect(i)
+        tester.circuit.deq.valid.expect(1)
+        tester.circuit.deq.ready = 1
+        tester.advance_cycle()
+    tester.circuit.deq.valid.expect(0)
+    tester.compile_and_run("verilator")
 
 
 class QueueModel:
@@ -26,27 +44,7 @@ class QueueModel:
         return self._entries.pop(0)
 
 
-def test_queue_simple():
-    tester = f.SynchronousTester(Queue(4, m.Bits[2]))
-    tester.advance_cycle()
-    for i in range(4):
-        tester.circuit.enq.data = i
-        tester.circuit.enq.valid = 1
-        tester.circuit.enq.ready.expect(1)
-        tester.advance_cycle()
-    tester.circuit.enq.valid = 0
-    tester.circuit.enq.ready.expect(0)
-    for i in range(4):
-        tester.circuit.deq.data.expect(i)
-        tester.circuit.deq.valid.expect(1)
-        tester.circuit.deq.ready = 1
-        tester.advance_cycle()
-    tester.circuit.deq.valid.expect(0)
-    tester.compile_and_run("verilator")
-
-
 def test_queue_model():
-    clear_imports(QueueModel)
     num_entries = 4
     tester = f.SynchronousTester(Queue(num_entries, m.UInt[32]))
     tester.step(2)
@@ -73,4 +71,42 @@ def test_queue_model():
         if_tester.circuit.deq.data.expect(var)
         tester.advance_cycle()
         tester.circuit.deq.ready = 0
+    tester.compile_and_run("verilator", use_pysv=True, disp_type="realtime")
+
+
+@f.python_monitor()
+class QueueMonitor:
+    @pysv.sv()
+    def __init__(self, num_entries):
+        self.num_entries = num_entries
+        self._entries = []
+
+    @pysv.sv()
+    def observe(self, enq: m.EnqIO[m.UInt[32]],
+                deq: m.EnqIO[m.UInt[32]]):
+        if deq.ready & deq.valid:
+            if len(self._entries) == 0:
+                raise Exception("Queue is empty")
+            assert deq.data == self._entries.pop(0)
+        if enq.ready & enq.valid:
+            if len(self._entries) > self.num_entries:
+                raise Exception("Queue is full")
+            self._entries.append(enq.data)
+
+
+def test_queue_monitor():
+    num_entries = 4
+    tester = f.SynchronousTester(Queue(num_entries, m.UInt[32]))
+    tester.step(2)
+    monitor = tester.Var("monitor", QueueMonitor)
+    tester.poke(monitor, tester.make_call_expr(QueueMonitor, num_entries))
+    for i in range(10):
+        enq_valid = Bit.random()
+        enq_data = BitVector.random(32)
+        tester.circuit.enq.data = enq_data
+        tester.circuit.enq.valid = enq_valid
+
+        deq_ready = Bit.random()
+        tester.circuit.deq.ready = deq_ready
+        tester.advance_cycle()
     tester.compile_and_run("verilator", use_pysv=True, disp_type="realtime")
