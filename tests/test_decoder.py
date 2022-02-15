@@ -4,8 +4,9 @@ import fault as f
 
 
 def test_decode_simple():
-    tester = f.Tester(Decoder(8))
-    tester.circuit.I = I = BitVector.random(8)
+    n = 8
+    tester = f.Tester(Decoder(n))
+    tester.circuit.I = I = BitVector.random(n)
     tester.eval()
-    tester.circuit.O.expect(BitVector[2**8](1) << BitVector[2**8](int(I)))
+    tester.circuit.O.expect(BitVector[2**n](1) << BitVector[2**n](int(I)))
     tester.compile_and_run("verilator")
