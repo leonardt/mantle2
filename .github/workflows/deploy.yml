@@ -37,6 +37,7 @@ jobs:
     - name: Upload to PyPI
       shell: bash -l {0}
       run: |
-          source .travis/deploy.sh
+          python setup.py sdist build
+          twine upload dist/* -u leonardt -p $PYPI_PASSWORD
       env:
         PYPI_PASSWORD: ${{ secrets.PYPI_PASSWORD }}

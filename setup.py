@@ -5,7 +5,7 @@ with open("README.md", "r", encoding="utf-8") as fh:
 
 setuptools.setup(
     name="mantle2",
-    version="0.0.3",
+    version="0.0.4",
     author="Lenny Truong",
     author_email="lenny@cs.stanford.edu",
     description="magma standard library (version 2)",
