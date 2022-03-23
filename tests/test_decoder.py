@@ -1,5 +1,5 @@
 from hwtypes import BitVector
-from mantle2.decoder import Decoder
+from mantle2 import Decoder
 import fault as f
 
 
