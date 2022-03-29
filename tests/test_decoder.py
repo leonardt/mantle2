@@ -1,11 +1,19 @@
+import pytest
 from hwtypes import BitVector
-from mantle2 import Decoder
+import magma as m
+from mantle2 import Decoder, decode
 import fault as f
 
 
-def test_decode_simple():
+class DecodeFuncWrapper(m.Circuit):
+    io = m.IO(I=m.In(m.Bits[8]), O=m.Out(m.Bits[2**8]))
+    io.O @= decode(io.I)
+
+
+@pytest.mark.parametrize("circ", [Decoder(8), DecodeFuncWrapper])
+def test_decode_simple(circ):
     n = 8
-    tester = f.Tester(Decoder(n))
+    tester = f.Tester(circ)
     tester.circuit.I = I = BitVector.random(n)
     tester.eval()
     tester.circuit.O.expect(BitVector[2**n](1) << BitVector[2**n](int(I)))
