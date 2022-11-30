@@ -6,7 +6,7 @@ from mantle2.util import ispow2
 
 class Counter(m.Generator2):
     """
-    Counts `n` times
+    Counts `n` times (0 to n - 1)
     """
 
     def __init__(self, n: int, has_enable: bool = False,
