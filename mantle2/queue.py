@@ -4,7 +4,7 @@ https://github.com/chipsalliance/chisel3/blob/master/src/main/scala/chisel3/util
 (missing support for `flow` and `pipe` parameters)
 """
 import magma as m
-from mantle2.counter import CounterTo
+from mantle2.counter import Counter
 
 
 class Queue(m.Generator2):
@@ -19,10 +19,9 @@ class Queue(m.Generator2):
         # Data storage
         ram = m.Memory(entries, T)()
 
-        # Read/write pointers (counts to entries - 1 since we include 0 as an
-        # index)
-        enq_ptr = CounterTo(entries - 1, has_enable=True)()
-        deq_ptr = CounterTo(entries - 1, has_enable=True)()
+        # Read/write pointers
+        enq_ptr = Counter(entries, has_enable=True)()
+        deq_ptr = Counter(entries, has_enable=True)()
 
         # Since the pointers can match when it's empty or full, we use an extra
         # bit to track when it may be full (there's been a write without a
