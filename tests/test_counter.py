@@ -15,10 +15,10 @@ def test_counter_to():
 def test_counter_to_cout():
     tester = fault.SynchronousTester(CounterTo(6, has_cout=True))
     for j in range(2):
-        for i in range(7):
+        for i in range(6):
             tester.circuit.O.expect(i)
             tester.advance_cycle()
-            tester.circuit.COUT.expect(i == 7)
+            tester.circuit.COUT.expect(i == 6)
     tester.compile_and_run("verilator")
 
 
