@@ -9,7 +9,8 @@ def test_counter_to():
         for i in range(6):
             tester.circuit.O.expect(i)
             tester.advance_cycle()
-    tester.compile_and_run("verilator")
+    tester.compile_and_run("verilator", magma_output="mlir-verilog",
+                           magma_opts={"check_circt_opt_version": False})
 
 
 def test_counter_to_cout():
@@ -19,7 +20,8 @@ def test_counter_to_cout():
             tester.circuit.O.expect(i)
             tester.circuit.COUT.expect(i == 5)
             tester.advance_cycle()
-    tester.compile_and_run("verilator")
+    tester.compile_and_run("verilator", magma_output="mlir-verilog",
+                           magma_opts={"check_circt_opt_version": False})
 
 
 def test_counter_to_enable():
@@ -31,19 +33,21 @@ def test_counter_to_enable():
     for i in range(3):
         tester.circuit.O.expect(i)
         tester.advance_cycle()
-    tester.compile_and_run("verilator")
+    tester.compile_and_run("verilator", magma_output="mlir-verilog",
+                           magma_opts={"check_circt_opt_version": False})
 
 
 def test_counter_to_resetn():
-    tester = fault.SynchronousTester(Counter(6, reset_type=m.ResetN))
-    tester.circuit.RESETN = 1
+    tester = fault.SynchronousTester(Counter(6, reset_type=m.Reset))
+    tester.circuit.RESET = 0
     for i in range(3):
         tester.circuit.O.expect(i)
         tester.advance_cycle()
-    tester.circuit.RESETN = 0
+    tester.circuit.RESET = 1
     tester.advance_cycle()
-    tester.circuit.RESETN = 1
+    tester.circuit.RESET = 0
     for i in range(3):
         tester.circuit.O.expect(i)
         tester.advance_cycle()
-    tester.compile_and_run("verilator")
+    tester.compile_and_run("verilator", magma_output="mlir-verilog",
+                           magma_opts={"check_circt_opt_version": False})

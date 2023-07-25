@@ -21,7 +21,8 @@ def test_queue_simple():
         tester.circuit.deq.ready = 1
         tester.advance_cycle()
     tester.circuit.deq.valid.expect(0)
-    tester.compile_and_run("verilator")
+    tester.compile_and_run("verilator", magma_output="mlir-verilog",
+                           magma_opts={"check_circt_opt_version": False})
 
 
 class QueueModel:
@@ -71,7 +72,9 @@ def test_queue_model():
         if_tester.circuit.deq.data.expect(var)
         tester.advance_cycle()
         tester.circuit.deq.ready = 0
-    tester.compile_and_run("verilator", use_pysv=True, disp_type="realtime")
+    tester.compile_and_run("verilator", use_pysv=True, disp_type="realtime",
+                           magma_output="mlir-verilog",
+                           magma_opts={"check_circt_opt_version": False})
 
 
 @f.python_monitor()
@@ -109,4 +112,6 @@ def test_queue_monitor():
         deq_ready = Bit.random()
         tester.circuit.deq.ready = deq_ready
         tester.advance_cycle()
-    tester.compile_and_run("verilator", use_pysv=True, disp_type="realtime")
+    tester.compile_and_run("verilator", use_pysv=True, disp_type="realtime",
+                           magma_output="mlir-verilog",
+                           magma_opts={"check_circt_opt_version": False})

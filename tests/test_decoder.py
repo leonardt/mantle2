@@ -17,4 +17,5 @@ def test_decode_simple(circ):
     tester.circuit.I = I = BitVector.random(n)
     tester.eval()
     tester.circuit.O.expect(BitVector[2**n](1) << BitVector[2**n](int(I)))
-    tester.compile_and_run("verilator")
+    tester.compile_and_run("verilator", magma_output="mlir-verilog",
+                           magma_opts={"check_circt_opt_version": False})

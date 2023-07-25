@@ -1,7 +1,8 @@
 import pytest
 import magma
+from magma.util import reset_global_context
 
 
 @pytest.fixture(autouse=True)
 def magma_test():
-    magma.frontend.coreir_.ResetCoreIR()
+    reset_global_context()
